@@ -1,0 +1,54 @@
+---
+title: "Coursera Statistical Inference Part 2"
+author: "Stella"
+date: '2022-12-09'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project Summary
+
+This is part two to the two part projects (1. A simulation excercise, 2. Basic inferential data analysis). Here, I will investigate the sample dataset about ToothGrowth. This dataset contains observations of the effect of vitamin C on tooth growth in Guinea Pigs. The response variable is the length of teeth in each of 10 guinea pigs at three differnt doses (0.5, 1, 2mg) of Vitamin C with each of the two delivery methods (orange juice, ascorbic acid)
+
+## Tooth Growth Data Set
+
+Loading the data set, and examining the overall structure.
+```{r load, echo=FALSE}
+library(datasets)
+data(ToothGrowth)
+str(ToothGrowth)
+summary(ToothGrowth)
+```
+From the summary and the basic exploratory data analysis, we can determine that 30 observations are related to Orange Juice, and the other 30 with ascorbic acid. Looking at the overall length, we can also see that the teeth lengths vary from 4.20 to 33.90, and have a mean of 28.81 and median of 19.25. 
+
+We can also use a boxplot:
+```{r initialPlot, echo=FALSE}
+library(ggplot2)
+p <- ggplot(ToothGrowth, aes(x=dose, y=len)) 
+p <- p + geom_boxplot(aes(fill=factor(dose)))
+p <- p + geom_point()
+p <- p + facet_grid(.~supp)
+p <- p + ggtitle("Tooth Growth by Supplement & Dosage")
+p
+```
+Based on the boxplot, at doses of 0.5 to 1.0, the OJ has a positive correlation compred to with VC. However, at 2.0 mg, tooth growth is relatively similar. 
+
+## Hypothesis Testing
+
+Let H0 = Orange Juice has an impact on tooth growing compared to ascorbic acid. Let H1 = Orange Juice does not have an impact on tooth growing compared to ascorbic acid. 
+
+```{r hypothesis, echo=FALSE}
+t.test(len ~ supp, data=ToothGrowth)
+t.test(len ~ supp, data=ToothGrowth[ToothGrowth$dose < 2,])
+t.test(len ~ supp, data=ToothGrowth[ToothGrowth$dose == 2,])
+```
+
+On a 95% CI, the first two tests do not include 0, and reveals that there is a statistically significant difference between OJ and CV. The impact decreases at higher levels, or 2mg as predicted in the boxplot. 
+
+## Conclusions
+Assuming the supplements (OJ and CV) were independently and identically distributed among subjects, we can conclude that orange juice would have a significant impact on tooth growth in Guinea Pigs as long as the dosage is not too high (above 2 mg). 
+
+
